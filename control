@@ -1,9 +1,13 @@
-Package: com.ethanarbuckle.apollo-customapicredentials
-Name: Apollo-CustomApiCredentials
-Version: 1.0.0
-Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
-Maintainer: Ethan Arbuckle
-Author: Ethan Arbuckle
+Package: com.ichitaso.apollopatcher
+Name: ApolloPatcher
+Version: 0.0.1
+Description: Change the Apollo client ID
 Section: Tweaks
-Depends: mobilesubstrate (>= 0.9.5000)
+Depends: mobilesubstrate
+Conflicts: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi
+Replaces: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi
+Architecture: iphoneos-arm
+Author: ichitaso
+Maintainer: ichitaso
+Depiction: https://cydia.ichitaso.com/depiction/apollopatcher.html
+SileoDepiction: https://cydia.ichitaso.com/depiction/apollopatcher.json
