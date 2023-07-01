@@ -121,7 +121,7 @@ static UIAlertController *alertWithText;
 
 %ctor {
     @autoreleasepool {
-        kCustomID = (id)[[[NSUserDefaults standardUserDefaults] objectForKey:@"Custom_ID"] ?: @"KwWCQfIGnW-76ib4hW2GAg" copy];
+        kCustomID = (id)[[[NSUserDefaults standardUserDefaults] objectForKey:@"Custom_ID"] ?: nil copy];
 
         %init(CustomID);
 

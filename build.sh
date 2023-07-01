@@ -6,4 +6,4 @@ make package
 
 export -n PREFIX
 make clean
-make package install THEOS_PACKAGE_SCHEME=rootless
+make package THEOS_PACKAGE_SCHEME=rootless
