@@ -1,10 +1,17 @@
 #import <UIKit/UIKit.h>
+#import <SafariServices/SafariServices.h>
 
 #define COLOR_BACKGROUND [UIColor colorWithRed:0.12 green:0.16 blue:0.61 alpha:1.0]
 
 static NSString *kCustomID;
 static NSString *kClientID;
 static UIAlertController *alertWithText;
+
+static void howtoUse(UIViewController *vc) {
+    NSString *url = @"https://cydia.ichitaso.com/depiction/apollopatcher.html";
+    SFSafariViewController *safari = [[SFSafariViewController alloc] initWithURL:[NSURL URLWithString:url]];
+    [vc presentViewController:safari animated:YES completion:nil];
+}
 
 @interface UIApplication (Private)
 - (void)suspend;
@@ -117,13 +124,18 @@ static UIAlertController *alertWithText;
         [[UIApplication sharedApplication] closeAppAnimatedExit];
     }];
 
-    UIAlertAction *action4 = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {}];
+    UIAlertAction *action4 = [UIAlertAction actionWithTitle:@"How to Use" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        howtoUse(self);
+    }];
+
+    UIAlertAction *action5 = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {}];
 
     // add the actions to the alert
     [alertWithText addAction:action1];
     [alertWithText addAction:action2];
     [alertWithText addAction:action3];
     [alertWithText addAction:action4];
+    [alertWithText addAction:action5];
 
     // Establish the weak self reference
     __weak typeof(self) weakSelf = self;
