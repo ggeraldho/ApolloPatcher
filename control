@@ -1,11 +1,11 @@
 Package: com.ichitaso.apollopatcher
 Name: ApolloPatcher
-Version: 0.0.2
+Version: 0.0.3
 Description: Change the Apollo client ID
 Section: Tweaks
 Depends: mobilesubstrate
-Conflicts: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi
-Replaces: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi
+Conflicts: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi, com.icraze.artemis
+Replaces: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi,com.icraze.artemis
 Architecture: iphoneos-arm
 Author: ichitaso
 Maintainer: ichitaso
