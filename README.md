@@ -15,11 +15,14 @@ sign out of all accounts in Apollo before installing
 	* redirect uri: `apollo://reddit-oauth`
 4. `create app`
 
-5. After creating the app you'll get a client identifier; it'll be a bunch of random characters. Put it in `Tweak.m`:
+5. After creating the app you'll get a client identifier; it'll be a bunch of random characters.
 
-       static NSString * const kRedditClientID = @"CLIENT_ID_GOES_HERE";
+6. Enter it in the Client ID in the settings and tap "Set RedditClientID".
 
-6. build and install
+7. It currently works without Imgur settings.
 
 
-For now Apollo will still use the original API creds for other services (like imgur), but i'll update this to support replacing those as well
+Added ability to upload and delete images to Imgur
+(Multiple images not supported)
+
+Repo: https://cydia.ichitaso.com
