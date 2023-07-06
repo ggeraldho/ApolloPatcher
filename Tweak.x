@@ -2,6 +2,8 @@
 #import <SafariServices/SafariServices.h>
 
 #define COLOR_BACKGROUND [UIColor colorWithRed:0.12 green:0.16 blue:0.61 alpha:1.0]
+#define RANDSTRING  [[NSProcessInfo processInfo] globallyUniqueString]
+#define RANDINT (arc4random() % 9) + 1
 
 static NSString *kCustomID;
 static NSString *kClientID;
@@ -50,6 +52,7 @@ static void howtoUse(UIViewController *vc) {
 
 %group CustomID
 %hook RDKOAuthCredential
+// reddit client id
 - (id)clientIdentifier {
     if (kCustomID) {
         return kCustomID;
@@ -58,8 +61,15 @@ static void howtoUse(UIViewController *vc) {
 }
 %end
 
+%hook RDKClient
+// Randomize User-Agent
+- (id)userAgent {
+    return [NSString stringWithFormat:@"iOS: com.%@.%@ v%d.%d.%d (by /u/%@)", RANDSTRING, RANDSTRING, RANDINT, RANDINT, RANDINT, RANDSTRING];
+}
+%end
+
 %hook NSURLSession
-// Upload
+// Imgur Upload
 - (NSURLSessionUploadTask*)uploadTaskWithRequest:(NSURLRequest*)request fromData:(NSData*)bodyData completionHandler:(void (^)(NSData*, NSURLResponse*, NSError*))completionHandler {
     NSString *urlString = [[request URL] absoluteString];
     NSString *oldPrefix = @"https://imgur-apiv3.p.rapidapi.com/3/image";
@@ -73,7 +83,7 @@ static void howtoUse(UIViewController *vc) {
     }
     return %orig();
 }
-// Delete
+// Imgur Delete
 - (NSURLSessionDataTask*)dataTaskWithRequest:(NSURLRequest*)request completionHandler:(void (^)(NSData*, NSURLResponse*, NSError*))completionHandler {
     NSString *urlString = [[request URL] absoluteString];
     NSString *oldPrefix = @"https://imgur-apiv3.p.rapidapi.com/3/image/";
@@ -87,6 +97,16 @@ static void howtoUse(UIViewController *vc) {
         return %orig(modifiedRequest,completionHandler);
     }
     return %orig();
+}
+// Fix Imgur loading issue
+- (NSURLSessionDataTask *)dataTaskWithURL:(NSURL *)url completionHandler:(void (^)(NSData *, NSURLResponse *, NSError *))completionHandler {
+    if ([url.absoluteString containsString:@"https://apollogur.download/api/image/"]) {
+        NSString *imageID = [url.lastPathComponent stringByDeletingPathExtension];
+        NSString *modifiedURLString = [NSString stringWithFormat:@"https://api.imgur.com/3/image/%@.json?client_id=%@", imageID, kClientID];
+        NSURL *modifiedURL = [NSURL URLWithString:modifiedURLString];
+        return %orig(modifiedURL, completionHandler);
+    }
+    return %orig;
 }
 %end
 %end
@@ -188,7 +208,7 @@ static void howtoUse(UIViewController *vc) {
 %ctor {
     @autoreleasepool {
         kCustomID = (id)[[[NSUserDefaults standardUserDefaults] objectForKey:@"Custom_ID"] ?: nil copy];
-        kClientID = (id)[[[NSUserDefaults standardUserDefaults] objectForKey:@"IMGUR_ID"] ?: @"1" copy];
+        kClientID = (id)[[[NSUserDefaults standardUserDefaults] objectForKey:@"IMGUR_ID"] ?: @"8b15a972041abb1" copy];
 
         %init(CustomID);
 
