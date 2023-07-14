@@ -68,6 +68,11 @@ static void howtoUse(UIViewController *vc) {
 }
 %end
 
+@interface NSURLSession (Private)
+- (BOOL)isJSONResponse:(NSURLResponse *)response;
+- (void)useDummyDataWithCompletionHandler:(void (^)(NSData *, NSURLResponse *, NSError *))completionHandler;
+@end
+
 %hook NSURLSession
 // Imgur Upload
 - (NSURLSessionUploadTask*)uploadTaskWithRequest:(NSURLRequest*)request fromData:(NSData*)bodyData completionHandler:(void (^)(NSData*, NSURLResponse*, NSError*))completionHandler {
@@ -99,14 +104,98 @@ static void howtoUse(UIViewController *vc) {
     return %orig();
 }
 // Fix Imgur loading issue
+static NSString *imageID;
 - (NSURLSessionDataTask *)dataTaskWithURL:(NSURL *)url completionHandler:(void (^)(NSData *, NSURLResponse *, NSError *))completionHandler {
-    if ([url.absoluteString containsString:@"https://apollogur.download/api/image/"]) {
-        NSString *imageID = [url.lastPathComponent stringByDeletingPathExtension];
+    //NSLog(@"ApolloPatcher:dataTaskWithURL:%@", url.absoluteString);
+    imageID = [url.lastPathComponent stringByDeletingPathExtension];
+    // Remove unwanted messages on app startup
+    if ([url.absoluteString containsString:@"https://apollogur.download/api/apollonouncement"] ||
+        [url.absoluteString containsString:@"https://apollogur.download/api/easter_sale"] ||
+        [url.absoluteString containsString:@"https://apollogur.download/api/html_codes"] ||
+        [url.absoluteString containsString:@"https://apollogur.download/api/refund_screen_config"]) {
+        return nil;
+    } else if ([url.absoluteString containsString:@"https://apollogur.download/api/image/"]) {
         NSString *modifiedURLString = [NSString stringWithFormat:@"https://api.imgur.com/3/image/%@.json?client_id=%@", imageID, kClientID];
+        NSURL *modifiedURL = [NSURL URLWithString:modifiedURLString];
+        // Access the modified URL to get the actual data
+        NSURLSessionDataTask *dataTask = [self dataTaskWithURL:modifiedURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (error || ![self isJSONResponse:response]) {
+                // If an error occurs or the response is not a JSON response, dummy data is used
+                [self useDummyDataWithCompletionHandler:completionHandler];
+            } else {
+                // If normal data is returned, the callback is executed
+                completionHandler(data, response, error);
+            }
+        }];
+
+        [dataTask resume];
+        return dataTask;
+    } else if ([url.absoluteString containsString:@"https://apollogur.download/api/album/"]) {
+        NSString *modifiedURLString = [NSString stringWithFormat:@"https://api.imgur.com/3/album/%@.json?client_id=%@", imageID, kClientID];
         NSURL *modifiedURL = [NSURL URLWithString:modifiedURLString];
         return %orig(modifiedURL, completionHandler);
     }
     return %orig;
+}
+%new
+- (BOOL)isJSONResponse:(NSURLResponse *)response {
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        NSString *contentType = httpResponse.allHeaderFields[@"Content-Type"];
+        if (contentType && [contentType rangeOfString:@"application/json" options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            return YES;
+        }
+    }
+    return NO;
+}
+%new
+- (void)useDummyDataWithCompletionHandler:(void (^)(NSData *, NSURLResponse *, NSError *))completionHandler {
+    // Create dummy data
+    NSDictionary *dummyData = @{
+        @"data": @{
+            @"id": @"example_id",
+            @"title": @"Example Image",
+            @"description": @"This is an example image",
+            @"datetime": @(1234567890),
+            @"type": @"image/gif",
+            @"animated": @(YES),
+            @"width": @(640),
+            @"height": @(480),
+            @"size": @(1024),
+            @"views": @(100),
+            @"bandwidth": @(512),
+            @"vote": @(0),
+            @"favorite": @(NO),
+            @"nsfw": @(NO),
+            @"section": @"example",
+            @"account_url": @"example_user",
+            @"account_id": @"example_account_id",
+            @"is_ad": @(NO),
+            @"in_most_viral": @(NO),
+            @"has_sound": @(NO),
+            @"tags": @[@"example", @"image"],
+            @"ad_type": @"image",
+            @"ad_url": @"https://example.com",
+            @"edited": @(0),
+            @"in_gallery": @(NO),
+            @"deletehash": @"abc123deletehash",
+            @"name": @"example_image",
+            @"link": [NSString stringWithFormat:@"https://i.imgur.com/%@.gif", imageID],
+            @"success": @(YES)
+        }
+    };
+
+    NSError *error;
+    NSData *dummyDataJSON = [NSJSONSerialization dataWithJSONObject:dummyData options:0 error:&error];
+
+    if (error) {
+        NSLog(@"JSON conversion error for dummy data: %@", error);
+        return;
+    }
+
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://apollogur.download/api/image/"] statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{@"Content-Type": @"application/json"}];
+
+    completionHandler(dummyDataJSON, response, nil);
 }
 %end
 %end

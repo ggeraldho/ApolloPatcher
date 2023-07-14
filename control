@@ -1,6 +1,6 @@
 Package: com.ichitaso.apollopatcher
 Name: ApolloPatcher
-Version: 0.0.4
+Version: 0.0.5
 Description: Change the Apollo client ID
 Section: Tweaks
 Depends: mobilesubstrate
