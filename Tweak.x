@@ -298,6 +298,8 @@ static NSString *imageID;
     @autoreleasepool {
         kCustomID = (id)[[[NSUserDefaults standardUserDefaults] objectForKey:@"Custom_ID"] ?: nil copy];
         kClientID = (id)[[[NSUserDefaults standardUserDefaults] objectForKey:@"IMGUR_ID"] ?: @"8b15a972041abb1" copy];
+        // Suppress wallpaper popup
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate dateWithTimeIntervalSinceNow:60*60*24*90] forKey:@"WallpaperPromptMostRecent2"];
 
         %init(CustomID);
 
