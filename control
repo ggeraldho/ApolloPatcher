@@ -1,11 +1,11 @@
 Package: com.ichitaso.apollopatcher
 Name: ApolloPatcher
-Version: 0.0.5
-Description: Change the Apollo client ID
+Version: 0.0.6
+Description: Apollo for Reddit tweak with in-app configurable API keys
 Section: Tweaks
 Depends: mobilesubstrate
-Conflicts: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi, com.icraze.artemis
-Replaces: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi,com.icraze.artemis
+Conflicts: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi, com.icraze.artemis, ca.jeffrey.apollo-improvedcustomapi
+Replaces: com.ethanarbuckle.apollo-customapicredentials, com.ryannair05.apolloapi, com.icraze.artemis, ca.jeffrey.apollo-improvedcustomapi
 Architecture: iphoneos-arm
 Author: ichitaso
 Maintainer: ichitaso
