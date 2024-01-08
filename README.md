@@ -20,7 +20,7 @@ Repo: https://cokepokes.github.io
 sign out of all accounts in Apollo before installing
 
 1. Sign into your reddit account (on desktop) and go here:  
-    [https://old.reddit.com/prefs/apps](https://old.reddit.com/prefs/apps)
+    [https://reddit.com/prefs/apps](https://reddit.com/prefs/apps)
 3. Click the `are you a developer? create an app...` button
 4. Fill in the fields
 	* name: Use whatever
