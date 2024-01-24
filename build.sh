@@ -7,3 +7,7 @@ make package
 export -n PREFIX
 make clean
 make package THEOS_PACKAGE_SCHEME=rootless
+
+export -n PREFIX
+make clean
+make package THEOS_PACKAGE_SCHEME=roothide
