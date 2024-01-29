@@ -7,7 +7,7 @@ Apollo for Reddit tweak with in-app configurable API keys
 
 ## Notes
 - **There is a known issue with crashes when trying to use Apollo Pro or Ultra features.**
-- **Apollo version 15.1.11 or lower is required.**
+- **Apollo version 1.15.11 or lower is required.**
   
 If you are jailbroken, please downgrade via AppStore++.
 
