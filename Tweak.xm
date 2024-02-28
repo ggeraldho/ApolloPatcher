@@ -189,6 +189,10 @@ static NSString *imageID;
         NSMutableURLRequest *mutableRequest = [request mutableCopy];
         // Insert the api credential and update the request on this session task
         [mutableRequest setValue:[NSString stringWithFormat:@"Client-ID %@", kClientID] forHTTPHeaderField:@"Authorization"];
+        // Set or else upload will fail with 400
+        if ([requestURL isEqualToString:@"https://api.imgur.com/3/image"]) {
+            [mutableRequest setValue:@"image/jpeg" forHTTPHeaderField:@"Content-Type"];
+        }
         [self setValue:mutableRequest forKey:@"_originalRequest"];
         [self setValue:mutableRequest forKey:@"_currentRequest"];
     }
