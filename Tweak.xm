@@ -30,7 +30,7 @@
     NSString *urlString = [[request URL] absoluteString];
     NSString *oldPrefix = @"https://imgur-apiv3.p.rapidapi.com/3/image";
     NSString *newPrefix = @"https://api.imgur.com/3/image";
-
+    //NSLog(@"uploadTaskWithRequest:%@", urlString);
     if ([urlString isEqualToString:oldPrefix]) {
         NSMutableURLRequest *modifiedRequest = [request mutableCopy];
         [modifiedRequest setURL:[NSURL URLWithString:newPrefix]];
@@ -55,7 +55,7 @@
     NSString *newImagePrefix = @"https://api.imgur.com/3/image/";
     NSString *oldAlbumPrefix = @"https://imgur-apiv3.p.rapidapi.com/3/album";
     NSString *newAlbumPrefix = @"https://api.imgur.com/3/album";
-
+    //NSLog(@"dataTaskWithRequest:%@", urlString);
     if ([urlString hasPrefix:oldImagePrefix]) {
         NSString *suffix = [urlString substringFromIndex:oldImagePrefix.length];
         NSString *newUrlString = [newImagePrefix stringByAppendingString:suffix];
@@ -72,7 +72,7 @@
 // Fix Imgur loading issue
 static NSString *imageID;
 - (NSURLSessionDataTask *)dataTaskWithURL:(NSURL *)url completionHandler:(void (^)(NSData *, NSURLResponse *, NSError *))completionHandler {
-    //NSLog(@"ApolloPatcher:dataTaskWithURL:%@", url.absoluteString);
+    //NSLog(@"dataTaskWithURL:dataTaskWithURL:%@", url.absoluteString);
     imageID = [url.lastPathComponent stringByDeletingPathExtension];
     // Remove unwanted messages on app startup
     if ([url.absoluteString containsString:@"https://apollogur.download/api/apollonouncement"] ||
@@ -173,7 +173,7 @@ static NSString *imageID;
     // Grab the request url
     NSURLRequest *request =  [self valueForKey:@"_originalRequest"];
     NSString *requestURL = request.URL.absoluteString;
-    //NSLog(@"ApolloPatcher:requestURL:%@", requestURL);
+    //NSLog(@"requestURL:%@", requestURL);
     // Drop requests to analytics/apns services
     if ([requestURL containsString:@"https://apollopushserver.xyz"] ||
         [requestURL containsString:@"telemetrydeck.com"] ||

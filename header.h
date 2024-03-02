@@ -3,6 +3,8 @@
 #import <SafariServices/SafariServices.h>
 #import "Preferences.h"
 
+#define NSLog(fmt, ...) NSLog((@"ApolloPatcher:" fmt), ##__VA_ARGS__)
+
 #define IS_PAD ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
 #define COLOR_BACKGROUND [UIColor colorWithRed:0.12 green:0.16 blue:0.61 alpha:1.0]
 #define RANDSTRING  [[NSProcessInfo processInfo] globallyUniqueString]
