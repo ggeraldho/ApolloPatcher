@@ -1,6 +1,9 @@
 #import "header.h"
 #import "fishhook.h"
 
+static NSString *randomUserAgent = [NSString stringWithFormat:@"iOS: com.%@.%@ v%d.%d.%d (by /u/%@)", RANDSTRING, RANDSTRING, RANDINT, RANDINT, RANDINT, RANDSTRING];
+// Memo iPad6 17.5.1
+// Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15
 %group CustomID
 %hook RDKOAuthCredential
 // reddit client id
@@ -15,7 +18,7 @@
 %hook RDKClient
 // Randomize User-Agent
 - (id)userAgent {
-    return [NSString stringWithFormat:@"iOS: com.%@.%@ v%d.%d.%d (by /u/%@)", RANDSTRING, RANDSTRING, RANDINT, RANDINT, RANDINT, RANDSTRING];
+    return randomUserAgent;
 }
 %end
 
@@ -174,6 +177,9 @@ static NSString *imageID;
     NSURLRequest *request =  [self valueForKey:@"_originalRequest"];
     NSString *requestURL = request.URL.absoluteString;
     //NSLog(@"requestURL:%@", requestURL);
+    // Log the User-Agent header
+    //NSString *userAgent = [request valueForHTTPHeaderField:@"User-Agent"];
+    //NSLog(@"User-Agent: %@", userAgent);
     // Drop requests to analytics/apns services
     if ([requestURL containsString:@"https://apollopushserver.xyz"] ||
         [requestURL containsString:@"telemetrydeck.com"] ||
@@ -185,14 +191,20 @@ static NSString *imageID;
         return;
     }
     // Intercept modified "unproxied" Imgur requests and replace Authorization header with custom client ID
+    NSMutableURLRequest *mutableRequest = [request mutableCopy];
     if ([requestURL containsString:@"https://api.imgur.com/"]) {
-        NSMutableURLRequest *mutableRequest = [request mutableCopy];
         // Insert the api credential and update the request on this session task
         [mutableRequest setValue:[NSString stringWithFormat:@"Client-ID %@", kClientID] forHTTPHeaderField:@"Authorization"];
         // Set or else upload will fail with 400
         if ([requestURL isEqualToString:@"https://api.imgur.com/3/image"]) {
             [mutableRequest setValue:@"image/jpeg" forHTTPHeaderField:@"Content-Type"];
         }
+        [self setValue:mutableRequest forKey:@"_originalRequest"];
+        [self setValue:mutableRequest forKey:@"_currentRequest"];
+    } else if ([requestURL containsString:@"https://oauth.reddit.com/"] || [requestURL containsString:@"https://www.reddit.com/"]) {
+        // reddit has blocked this user agent so will change it to a randomized one
+        // iOS: com.christianselig.Apollo v1.15.11 (by /u/iamthatis)
+        [mutableRequest setValue:randomUserAgent forHTTPHeaderField:@"User-Agent"];
         [self setValue:mutableRequest forKey:@"_originalRequest"];
         [self setValue:mutableRequest forKey:@"_currentRequest"];
     }
